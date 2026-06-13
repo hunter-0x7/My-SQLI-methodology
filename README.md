@@ -1,23 +1,4 @@
 
-# 🎯 **COMPLETE SQL INJECTION HANDBOOK**
-> *For README.md - Comprehensive Guide from Basics to Advanced*
-
----
-
-## 📚 **TABLE OF CONTENTS**
-
-1. [What is SQL Injection?](#what-is-sql-injection)
-2. [Root Cause](#root-cause)
-3. [Types of SQL Injection](#types-of-sql-injection)
-4. [How to Find SQL Injection](#how-to-find-sql-injection)
-5. [Detection Methodology](#detection-methodology)
-6. [Database-Specific Payloads](#database-specific-payloads)
-7. [WAF Bypass Techniques](#waf-bypass-techniques)
-8. [Exploitation & Data Extraction](#exploitation--data-extraction)
-9. [Prevention & Mitigation](#prevention--mitigation)
-10. [Reporting Template](#reporting-template)
-11. [Quick Reference Cheat Sheet](#quick-reference-cheat-sheet)
-
 ---
 
 ## 🔴 **WHAT IS SQL INJECTION?**

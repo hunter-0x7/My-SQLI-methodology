@@ -1,0 +1,15 @@
+Referer: https://https://redact.com/408685756payload
+
+Cookie: _gcl_au=1.1.2127391584.1587087463paylaod
+
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87Payload
+
+or
+
+Referer: https://https://redact.com/408685756 payload
+
+Cookie: _gcl_au=1.1.2127391584.1587087463 paylaod
+
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Payload
+
+X-Forwarded-For: paylaod

